@@ -10,12 +10,35 @@ import ru.job4j.tracker.model.Item;
 
 import java.util.List;
 
-public class HbmTracker implements Store, AutoCloseable {
+/**
+ * Класс реализации хранилища заявок
+ * хранение осуществляется в базе данных,
+ * для работы используется Hibernate
+ * @see ru.job4j.tracker.store.Store
+ * @author Alexander Emelyanov
+ * @version 1.0
+ */
+public class HibernateStore implements Store, AutoCloseable {
+
+    /**
+     * Экземпляр StandardServiceRegistry
+     */
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure().build();
+
+    /**
+     * Экземпляр SessionFactory
+     */
     private final SessionFactory sf = new MetadataSources(registry)
             .buildMetadata().buildSessionFactory();
 
+    /**
+     * Выполняет добавление заявки в хранилище
+     * и ее возврат.
+     *
+     * @param item заявка
+     * @return заявка
+     */
     @Override
     public Item add(Item item) {
         try (Session session = sf.openSession()) {
@@ -26,6 +49,14 @@ public class HbmTracker implements Store, AutoCloseable {
         return item;
     }
 
+    /**
+     * Выполняет замену заявки в хранилище.
+     * Возвращает true, если заявка с искомым идентификатором
+     * есть в хранилище.
+     *
+     * @param item заявка
+     * @return true, если замена выполнена, иначе false
+     */
     @Override
     public boolean replace(int id, Item item) {
         boolean result = false;
@@ -41,6 +72,12 @@ public class HbmTracker implements Store, AutoCloseable {
         return result;
     }
 
+    /**
+     * Выполняет удаление заявки из хранилища.
+     *
+     * @param id идентификатор заявки
+     * @return true, если удаление выполнено, иначе false
+     */
     @Override
     public boolean delete(int id) {
         boolean result = false;
@@ -55,6 +92,12 @@ public class HbmTracker implements Store, AutoCloseable {
         return result;
     }
 
+    /**
+     * Выполняет возврат из хранилища списка всех заявок.
+     * Если заявки отсутствуют, вернется пустой список.
+     *
+     * @return список заявок
+     */
     @Override
     public List<Item> findAll() {
         List<Item> items;
@@ -66,6 +109,12 @@ public class HbmTracker implements Store, AutoCloseable {
         return items;
     }
 
+    /**
+     * Выполняет поиск по наименованию и возврат из хранилища списка
+     * найденных заявок. Если заявки не найдены, вернется пустой список.
+     *
+     * @return список заявок
+     */
     @Override
     public List<Item> findByName(String key) {
         List<Item> items;
@@ -79,6 +128,13 @@ public class HbmTracker implements Store, AutoCloseable {
         return items;
     }
 
+    /**
+     * Выполняет поиск по идентификатору и возврат из хранилища заявки.
+     * Если заявка не найдена, будет возвращен null.
+     *
+     * @param id идентификатор заявки
+     * @return заявка
+     */
     @Override
     public Item findById(int id) {
         Item result;
@@ -90,6 +146,9 @@ public class HbmTracker implements Store, AutoCloseable {
         return result;
     }
 
+    /**
+     * Закрывает соединение после окончания работы хранилища.
+     */
     @Override
     public void close() {
         StandardServiceRegistryBuilder.destroy(registry);

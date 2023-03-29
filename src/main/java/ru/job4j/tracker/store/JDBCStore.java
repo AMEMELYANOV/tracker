@@ -1,5 +1,7 @@
 package ru.job4j.tracker.store;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import ru.job4j.tracker.model.Item;
 
 import java.io.InputStream;
@@ -8,18 +10,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class SqlTracker implements Store {
+/**
+ * Класс реализации хранилища заявок
+ * хранение осуществляется в базе данных,
+ * для работы используется JDBC
+ * @see ru.job4j.tracker.store.Store
+ * @author Alexander Emelyanov
+ * @version 1.0
+ */
+@AllArgsConstructor
+@NoArgsConstructor
+public class JDBCStore implements Store {
+
+    /**
+     * Соединение с базой данных
+     */
     private Connection cn;
 
-    public SqlTracker() {
-    }
-
-    public SqlTracker(Connection cn) {
-        this.cn = cn;
-    }
-
+    /**
+     * Выполняет инициализацию соединения с базой данных
+     * для работы с хранилищем.
+     */
     public void init() {
-        try (InputStream in = SqlTracker.class.getClassLoader()
+        try (InputStream in = JDBCStore.class.getClassLoader()
                 .getResourceAsStream("app.properties")) {
             Properties config = new Properties();
             config.load(in);
@@ -34,13 +47,13 @@ public class SqlTracker implements Store {
         }
     }
 
-    @Override
-    public void close() throws Exception {
-        if (cn != null) {
-            cn.close();
-        }
-    }
-
+    /**
+     * Выполняет добавление заявки в хранилище
+     * и ее возврат.
+     *
+     * @param item заявка
+     * @return заявка
+     */
     @Override
     public Item add(Item item) {
         try (PreparedStatement ps = cn.prepareStatement("insert into items(name) values (?)",
@@ -58,6 +71,14 @@ public class SqlTracker implements Store {
         return item;
     }
 
+    /**
+     * Выполняет замену заявки в хранилище.
+     * Возвращает true, если заявка с искомым идентификатором
+     * есть в хранилище.
+     *
+     * @param item заявка
+     * @return true, если замена выполнена, иначе false
+     */
     @Override
     public boolean replace(int id, Item item) {
         boolean result = false;
@@ -71,6 +92,12 @@ public class SqlTracker implements Store {
         return result;
     }
 
+    /**
+     * Выполняет удаление заявки из хранилища.
+     *
+     * @param id идентификатор заявки
+     * @return true, если удаление выполнено, иначе false
+     */
     @Override
     public boolean delete(int id) {
         boolean result = false;
@@ -83,6 +110,12 @@ public class SqlTracker implements Store {
         return result;
     }
 
+    /**
+     * Выполняет возврат из хранилища списка всех заявок.
+     * Если заявки отсутствуют, вернется пустой список.
+     *
+     * @return список заявок
+     */
     @Override
     public List<Item> findAll() {
         List<Item> items = new ArrayList<>();
@@ -101,6 +134,12 @@ public class SqlTracker implements Store {
         return items;
     }
 
+    /**
+     * Выполняет поиск по наименованию и возврат из хранилища списка
+     * найденных заявок. Если заявки не найдены, вернется пустой список.
+     *
+     * @return список заявок
+     */
     @Override
     public List<Item> findByName(String key) {
         List<Item> items = new ArrayList<>();
@@ -120,6 +159,13 @@ public class SqlTracker implements Store {
         return items;
     }
 
+    /**
+     * Выполняет поиск по идентификатору и возврат из хранилища заявки.
+     * Если заявка не найдена, будет возвращен null.
+     *
+     * @param id идентификатор заявки
+     * @return заявка
+     */
     @Override
     public Item findById(int id) {
         Item item = null;
@@ -137,5 +183,15 @@ public class SqlTracker implements Store {
             e.printStackTrace();
         }
         return item;
+    }
+
+    /**
+     * Закрывает соединение после окончания работы хранилища.
+     */
+    @Override
+    public void close() throws Exception {
+        if (cn != null) {
+            cn.close();
+        }
     }
 }
