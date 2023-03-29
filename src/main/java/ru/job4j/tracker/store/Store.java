@@ -30,6 +30,7 @@ public interface Store extends AutoCloseable {
     /**
      * Выполняет замену заявки в хранилище.
      *
+     * @param id идентификатор заявки
      * @param item заявка
      * @return true или false в зависимости от результата
      */
@@ -54,6 +55,7 @@ public interface Store extends AutoCloseable {
      * Выполняет поиск по наименованию и возврат из хранилища списка
      * найденных заявок.
      *
+     * @param key наименование заявки
      * @return список заявок
      */
     List<Item> findByName(String key);

@@ -47,7 +47,6 @@ public class StartUI {
      * @param actions список действий приложения
      */
     private void showMenu(List<UserAction> actions) {
-        out.println("");
         out.println("Menu.");
         for (int index = 0; index < actions.size(); index++) {
             out.println(index + ". " + actions.get(index).name());

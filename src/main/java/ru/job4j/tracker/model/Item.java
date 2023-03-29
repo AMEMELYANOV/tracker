@@ -52,6 +52,15 @@ public class Item {
     /**
      * Конструктор.
      *
+     * @param name наименование заявки
+     */
+    public Item(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Конструктор.
+     *
      * @param id идентификатор заявки
      * @param name наименование заявки
      */
