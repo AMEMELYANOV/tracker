@@ -23,6 +23,36 @@ import java.util.Properties;
 public class JDBCStore implements Store {
 
     /**
+     * SQL запрос по вставке данных в таблицу items
+     */
+    private final static String INSERT_INTO_ITEMS = "insert into items(name) values (?)";
+
+    /**
+     * SQL запрос по обновлению заявки из таблицы items
+     */
+    private final static String UPDATE_ITEM = "update items set name = ? where id = ?";
+
+    /**
+     * SQL запрос по удалению заявки из таблицы items по полю id
+     */
+    private final static String DELETE_ITEM = "delete from items where id = ?";
+
+    /**
+     * SQL запрос по выбору всех заявок из таблицы items
+     */
+    private final static String SELECT_ALL_ITEMS = "select * from items";
+
+    /**
+     * SQL запрос по выбору заявок из таблицы items по полю name
+     */
+    private final static String SELECT_ALL_ITEMS_BY_NAME = "select * from items where name = ?";
+
+    /**
+     * SQL запрос по выбору заяви из таблицы items по полю id
+     */
+    private final static String SELECT_ITEM_BY_ID = "select * from items where id = ?";
+
+    /**
      * Соединение с базой данных
      */
     private Connection cn;
@@ -56,7 +86,7 @@ public class JDBCStore implements Store {
      */
     @Override
     public Item add(Item item) {
-        try (PreparedStatement ps = cn.prepareStatement("insert into items(name) values (?)",
+        try (PreparedStatement ps = cn.prepareStatement(INSERT_INTO_ITEMS,
                 Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, item.getName());
             ps.execute();
@@ -82,7 +112,7 @@ public class JDBCStore implements Store {
     @Override
     public boolean replace(int id, Item item) {
         boolean result = false;
-        try (PreparedStatement ps = cn.prepareStatement("update items set name = ? where id = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement(UPDATE_ITEM)) {
             ps.setString(1, item.getName());
             ps.setInt(2, id);
             result = ps.executeUpdate() > 0;
@@ -101,7 +131,7 @@ public class JDBCStore implements Store {
     @Override
     public boolean delete(int id) {
         boolean result = false;
-        try (PreparedStatement ps = cn.prepareStatement("delete from items where id = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement(DELETE_ITEM)) {
             ps.setInt(1, id);
             result = ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -119,7 +149,7 @@ public class JDBCStore implements Store {
     @Override
     public List<Item> findAll() {
         List<Item> items = new ArrayList<>();
-        try (PreparedStatement ps = cn.prepareStatement("select * from items")) {
+        try (PreparedStatement ps = cn.prepareStatement(SELECT_ALL_ITEMS)) {
             try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
                     items.add(new Item(
@@ -143,7 +173,7 @@ public class JDBCStore implements Store {
     @Override
     public List<Item> findByName(String key) {
         List<Item> items = new ArrayList<>();
-        try (PreparedStatement ps = cn.prepareStatement("select * from items where name = ?")) {
+        try (PreparedStatement ps = cn.prepareStatement(SELECT_ALL_ITEMS_BY_NAME)) {
             ps.setString(1, key);
             try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {

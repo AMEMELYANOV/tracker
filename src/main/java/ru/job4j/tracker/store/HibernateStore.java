@@ -14,11 +14,22 @@ import java.util.List;
  * Класс реализации хранилища заявок
  * хранение осуществляется в базе данных,
  * для работы используется Hibernate
- * @see ru.job4j.tracker.store.Store
+ *
  * @author Alexander Emelyanov
  * @version 1.0
+ * @see ru.job4j.tracker.store.Store
  */
 public class HibernateStore implements Store, AutoCloseable {
+
+    /**
+     * HQL запрос по выбору заявок из таблицы items по полю name
+     */
+    private final static String FIND_ITEMS_BY_NAME = "from Item where name = :paramName";
+
+    /**
+     * HQL запрос по выбору всех заявок из таблицы
+     */
+    private final static String FIND_ALL_ITEMS = "from Item";
 
     /**
      * Экземпляр StandardServiceRegistry
@@ -103,7 +114,7 @@ public class HibernateStore implements Store, AutoCloseable {
         List<Item> items;
         try (Session session = sf.openSession()) {
             session.beginTransaction();
-            items = session.createQuery("from Item").list();
+            items = session.createQuery(FIND_ALL_ITEMS).list();
             session.getTransaction().commit();
         }
         return items;
@@ -120,7 +131,7 @@ public class HibernateStore implements Store, AutoCloseable {
         List<Item> items;
         try (Session session = sf.openSession()) {
             session.beginTransaction();
-            Query query = session.createQuery("from Item where name = :paramName");
+            Query query = session.createQuery(FIND_ITEMS_BY_NAME);
             query.setParameter("paramName", key);
             items = query.list();
             session.getTransaction().commit();

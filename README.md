@@ -1,6 +1,4 @@
-# job4j_tracker
-
-# **Проект - Трекер**
+# Tracker
 
 ## <p id="contents">Оглавление</p>
 
@@ -33,6 +31,9 @@
 Консольное приложение для хранения заявок.
 Возможна работа с СУБД PosgreSQL для хранения заявок, как с помощью
 JDBC, так и с использованием Hibernate.
+
+Функционал:
+
 * Создание заявок.
 * Просмотр всего списка заявок.
 * Редактирование заявки.
@@ -44,14 +45,14 @@ JDBC, так и с использованием Hibernate.
 
 ## <p id="02">Стек технологий</p>
 
-* Java 17
-* JUnit 4
-* PostgreSql 14, Hibernate 5.4
-* Maven 3.8
+- Java 17
+- JUnit 4
+- PostgreSQL 14, Hibernate 5.4
+- Maven 3.8
 
   Инструменты:
 
-* Javadoc, JaCoCo, Checkstyle
+- Javadoc, JaCoCo, Checkstyle
 
 <p><a href="#contents">К оглавлению</a></p>
 
@@ -66,6 +67,7 @@ Java 17, Maven 3.8, PostgreSQL 14
 ### <p id="0401">1. Сборка проекта</p>
 
 Команда для сборки в jar:
+
 `mvn clean package -DskipTests`
 
 <p><a href="#contents">К оглавлению</a></p>
@@ -74,10 +76,13 @@ Java 17, Maven 3.8, PostgreSQL 14
 
 Перед запуском проекта необходимо создать базу данных todo
 в PostgreSQL, команда для создания базы данных:
+
 `create database tracker;`
+
 Средство миграции Liquibase автоматически создаст структуру
 базы данных и наполнит ее предустановленными данными.
 Команда для запуска приложения:
+
 `java -jar target/tracker.jar`
 
 <p><a href="#contents">К оглавлению</a></p>
